@@ -3,7 +3,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 
 const BreedListSkeleton = () => (
   <ul className="list-group">
-    {Array(20)
+    {Array(50)
       .fill()
       .map((_, index) => (
         <li key={index} className="list-group-item">

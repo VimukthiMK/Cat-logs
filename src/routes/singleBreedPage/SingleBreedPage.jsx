@@ -3,49 +3,42 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useParams, Link } from 'react-router-dom'
 import { fetchCatById } from 'src/redux/cats/catActions'
 
+import BreedDetailsSkeleton from 'src/components/loadingSkeleton/BreedDetailsSkeleton' // Skeletons
+import BreedDetails from 'src/components/breedDetails/BreedDetails' //Breed details
+import { AiOutlineLeft } from "react-icons/ai" // React-icons
+import ErrorComponent from 'src/components/errorComponent/ErrorComponent' // Error
+
 const SingleBreedPage = () => {
   const { id } = useParams()
   const dispatch = useDispatch()
-  const { selectedCat, status, error } = useSelector((state) => state.cats)
+  const { selectedCat, status } = useSelector((state) => state.cats)
 
   useEffect(() => {
-    // Fetch cat by id only if selected Cat is null or the id does not match
     if (!selectedCat || selectedCat.id !== id) {
       dispatch(fetchCatById(id))
     }
   }, [id, dispatch, selectedCat])
 
-  if (status === 'loading') {
-    return <p>Loading...</p>
-  }
-
-  if (status === 'failed') {
-    return <p>Error: {error}</p>
-  }
-
-  if (status === 'succeeded' && !selectedCat) {
-    return <p>Cat not found.</p>
-  }
-
   return (
-    <div className="container mt-5">
-      {selectedCat ? (
-        <>
-          <h1>{selectedCat.name}</h1>
-          <img
-            src={selectedCat.image?.url}
-            alt={selectedCat.name}
-            style={{ maxWidth: '300px', height: 'auto' }}
-            className="img-fluid mb-3"
-          />
-          <p><strong>Origin:</strong> {selectedCat.origin}</p>
-          <p><strong>Life Span:</strong> {selectedCat.life_span} years</p>
-          <p>{selectedCat.description}</p>
-          <Link to="/" className="btn btn-primary mt-3">Back to Home</Link>
-        </>
-      ) : (
-        <p>Loading...</p>
-      )}
+    <div className="d-flex justify-content-center align-items-center vh-100">
+      <div className="container bg-light p-4 rounded shadow-sm" style={{ paddingTop: '10px', paddingBottom: '20px' }}>
+
+        {/* Back navigation to catelog */}
+        <Link to="/"><AiOutlineLeft size={30} color='black' /></Link>
+
+        {/* React Loading Skeleton */}
+        {status === 'loading' ? (
+          <BreedDetailsSkeleton />
+
+        ) : status === 'failed' ? (  // If status Failed
+          <ErrorComponent/>
+
+        ) : (
+          selectedCat && (
+            <BreedDetails />
+          )
+        )}
+      </div>
     </div>
   )
 }

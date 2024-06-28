@@ -1,23 +1,29 @@
+import { Suspense, lazy } from 'react'
 import { useSelector } from 'react-redux'
-import SearchBar from 'src/components/searchBar/SearchBar'
-import BreedList from 'src/components/breedList/BreedList'
+import SearchBar from 'src/components/searchBar/SearchBar' // Search bar
+import ErrorComponent from 'src/components/errorComponent/ErrorComponent' // Error
+
+const BreedList = lazy(() => import('src/components/breedList/BreedList'))
 
 const HomePage = () => {
-  const { status, error } = useSelector((state) => state.cats)
+  const { status } = useSelector((state) => state.cats)
 
   return (
-    <div className="container mt-5 mb-4">
+    <div className="container mb-4 p-4 rounded mt-lg-5 br-8 bg-light">
       {/* Heading */}
-      <h1 className="mb-4">Cat Catalog</h1>
+      <h1 className="mb-4 text-center">Cat Catalog</h1>
 
       {/* SearchBar */}
       <SearchBar />
 
-      {/* Breed List */}
-      <BreedList />
+      {/* Breed List with lazy loading */}
+      <Suspense fallback={<p>Loading...</p>}>
+        <BreedList />
+      </Suspense>
 
-      {status === 'loading' && <p>Loading...</p>}
-      {status === 'failed' && <p className="text-danger">Error: {error}</p>}
+      {/*// If status Failed */}
+     {status === 'failed' && 
+     <ErrorComponent/>}
     </div>
   )
 }
